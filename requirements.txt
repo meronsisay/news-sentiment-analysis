@@ -9,3 +9,4 @@ spacy-legacy==3.0.12
 spacy-loggers==1.0.5
 textblob==0.20.0
 ipykernel
+TA-Lib==0.6.8
