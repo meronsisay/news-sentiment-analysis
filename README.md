@@ -4,15 +4,16 @@ A comprehensive analytical pipeline that combines NLP sentiment analysis of fina
 
 ## Project Overview
 
-This project addresses a critical business need: separating signal from noise in the constant stream of financial news. By quantifying sentiment in headlines and correlating it with price action, we build a foundation for predictive investment strategies.
+This project addresses Nova Financial Solutions' goal of enhancing predictive analytics by separating signal from noise in financial news. The pipeline:
 
-### Business Objective
+- Processes **1.4 million news headlines** (2009–2020) for **5 technology stocks**: AAPL, AMZN, GOOG, META, NVDA
+- Computes **technical indicators** (SMA, EMA, RSI, MACD) for trend and momentum analysis
+- Quantifies **sentiment scores** using VADER with custom financial lexicon (e.g., "surges", "crashes", "upgrade")
+- Measures **Pearson correlation** between news sentiment and daily stock returns (same-day)
 
-Nova Financial Solutions seeks to enhance predictive analytics capabilities by:
-- Quantifying sentiment from financial news headlines using NLP
-- Computing technical indicators from historical price data
-- Establishing statistical correlations between news sentiment and stock price movements
-- Delivering actionable investment strategy recommendations
+**Key Question:** Does financial news sentiment predict stock price movements?
+
+
 
 ## Repository Structure
 
@@ -23,13 +24,14 @@ news-sentiment-analysis/
 ├── data/raw/ # Raw dataset storage
 ├── notebooks/ # Jupyter notebooks for analysis
 │ ├── eda_news_sentiment.ipynb
-│ └── technical_indicators.ipynb
+│ ├── technical_indicators.ipynb
+│ └── sentiment_correlation.ipynb
 ├── src/ # Reusable Python modules
 │ ├── stock_data_loader.py
 │ ├── indicators.py
 │ └── visualizations.py
-├── tests/ 
-├── scripts/ 
+├── tests/ # Unit tests
+├── scripts/ # Utility scripts
 ├── .gitignore
 ├── requirements.txt
 └── README.md
@@ -42,42 +44,63 @@ news-sentiment-analysis/
 - **Financial News**: 1.4M headlines (2009-2020) with publisher, date, and stock symbol metadata
 - **Stock Prices**: Daily OHLCV data from Yahoo Finance
 
-## Analysis Components
+## Key Findings
 
-### Exploratory Data Analysis (`eda_news_sentiment.ipynb`)
+| Metric | Result |
+|--------|--------|
+| **Overall Correlation** | r = 0.2246 (weak positive) |
+| **Strongest Stock** | META (r = 0.49, p < 0.001) |
+| **Most Reliable** | NVDA (1,143 days, r = 0.22) |
+| **News Coverage** | 95.6% of trading days have news |
+| **Publisher Concentration** | Top 5 publishers = 52.9% of articles |
 
-| Component | Methodology | Key Finding |
-|-----------|-------------|--------------|
-| Descriptive Stats | Character count distribution | Mean headline length: 73 chars |
-| Publisher Analysis | Frequency aggregation | Top 5 publishers control 52.9% of volume |
-| Time Series | Daily volume with 2σ spike detection | 85 spike days, 95.6% coverage |
-| Topic Modeling | TF-IDF, bigrams, LDA | Key phrases: "price target", "52 week" |
-| Email Extraction | Regex pattern matching | 8,088 email-contributed articles |
+---
 
-**Key Discovery**: Largest news spike (2,739 articles) occurred on March 12, 2020 — Black Thursday COVID crash.
+## Notebooks
 
-### Technical Analysis (`technical_indicators.ipynb`)
+| Notebook | Description |
+|----------|-------------|
+| `eda_news_sentiment.ipynb` | EDA: headline stats, publisher analysis, topic modeling, time series |
+| `technical_indicators.ipynb` | Technical analysis: SMA, EMA, RSI, MACD, Sharpe ratio |
+| `sentiment_correlation.ipynb` | Sentiment scoring, date alignment, correlation, visualizations |
 
-**Calculated Indicators**
+---
 
-| Indicator | Purpose | Parameters |
-|-----------|---------|------------|
-| SMA (20 & 50) | Trend direction | Short & long-term averages |
-| RSI (14) | Momentum / Overbought-Oversold | 30/70 thresholds |
-| MACD (12,26,9) | Trend strength & momentum | Fast, slow, signal |
+## Technologies Used
 
-**Signal Logic**
+| Category | Tools |
+|----------|-------|
+| **Data Processing** | Pandas, NumPy |
+| **NLP & Sentiment** | VADER, TextBlob |
+| **Technical Indicators** | TA-Lib |
+| **Visualization** | Matplotlib, Seaborn |
+| **Statistical Analysis** | SciPy, Pearson correlation |
+| **CI/CD** | GitHub Actions |
 
-| Indicator | Bullish | Bearish |
-|-----------|---------|---------|
-| Moving Averages | Price > SMA-50 | Price < SMA-50 |
-| MACD | MACD > Signal | MACD < Signal |
-| RSI | < 30 (Oversold) | > 70 (Overbought) |
+---
 
-**Performance Metrics Calculated**
-- Total return & annualized volatility
-- Sharpe ratio (risk-adjusted return)
-- Maximum drawdown
+## Correlation Results
+
+| Stock | Correlation | P-value | Significance | Days |
+|-------|-------------|---------|--------------|------|
+| META | 0.4921 | < 0.001 |  Significant | 74 |
+| NVDA | 0.2240 | < 0.001 |  Significant | 1,143 |
+| GOOG | 0.1884 | < 0.001 |  Significant | 353 |
+| AAPL | 0.1697 | 0.191 |  Not significant | 61 |
+| AMZN | 0.1030 | n < 30 |  Insufficient | 28 |
+| **Overall** | **0.2246** | - | Weak positive | 1,659 |
+
+---
+
+## Limitations
+
+| Limitation | Impact |
+|------------|--------|
+| **Data Imbalance** | NVDA = 69% of matched observations |
+| **No Lag Analysis** | Same-day correlation only |
+| **Confounding Factors** | Macro events not isolated |
+| **Low Statistical Power** | AAPL (61 days), AMZN (28 days) |
+| **Publisher Concentration** | Top 5 publishers = 52.9% of news |
 
 
 ## Setup Instructions
