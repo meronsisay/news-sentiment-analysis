@@ -28,6 +28,7 @@ Comprehensive exploratory analysis of the financial news dataset (1.4 million ar
 - Word/phrase frequency tables
 
 ---
+
 ## Technical Analysis
 
 ### `technical_indicators.ipynb`
@@ -70,8 +71,59 @@ Automated pipeline for calculating technical indicators and generating trading s
 - RSI with overbought/oversold thresholds
 - MACD histogram with signal line
 
-**Extensibility**
+---
 
-- Add any stock ticker by modifying input list
-- Adjust indicator parameters to test different strategies
-- Integrate with news sentiment for enhanced signals
+## Sentiment & Correlation Analysis
+
+### `sentiment_correlation.ipynb`
+
+Quantifies the relationship between financial news sentiment and daily stock returns for 5 tech stocks (AAPL, AMZN, GOOG, META, NVDA).
+
+**Methodology**
+
+| Step | Approach |
+|------|----------|
+| Date Alignment | Weekend/holiday news shifted to next trading day |
+| Sentiment Scoring | VADER with custom financial lexicon (surges, crashes, upgrade, beat, miss) |
+| Daily Returns | (Close_t - Close_{t-1}) / Close_{t-1} × 100 |
+| Aggregation | Average sentiment per stock per day |
+| Correlation | Pearson coefficient (same-day) |
+
+**Results**
+
+| Stock | Correlation | P-value | Significance | Days |
+|-------|-------------|---------|--------------|------|
+| META | 0.4921 | < 0.001 |  Significant | 74 |
+| NVDA | 0.2240 | < 0.001 |  Significant | 1,143 |
+| GOOG | 0.1884 | < 0.001 |  Significant | 353 |
+| AAPL | 0.1697 | 0.191 |  Not significant | 61 |
+| AMZN | 0.1030 | n < 30 |  Insufficient data | 28 |
+| **Overall** | **0.2246** | - | Weak positive | 1,659 |
+
+**Pattern Validation**
+
+| Sentiment | Average Return | 
+|-----------|----------------|
+| Positive | Highest | 
+| Neutral | Middle | 
+| Negative | Lowest | 
+
+**Key Limitations**
+
+- **Data Imbalance**: NVDA represents 69% of observations
+- **No Lag Analysis**: Same-day alignment only (no T+1)
+- **Confounding Factors**: Macro events and earnings not isolated
+- **Low Statistical Power**: AAPL (61 days), AMZN (28 days)
+- **Publisher Concentration**: Top 5 publishers = 52.9% of news
+
+**Visualizations Included**
+
+- Scatter plot with correlation annotation (overall + per-stock)
+- Bar chart of returns by sentiment category (overall + per-stock)
+- Hexbin plots for dense data visualization
+- Regression plots with 95% confidence intervals
+
+**Conclusion**
+
+News sentiment shows a **weak positive correlation** with same-day stock returns (r = 0.22). META is most sentiment-sensitive (r = 0.49), while AAPL and AMZN lack statistical significance. Results are limited by data imbalance and absence of lag effects.
+
